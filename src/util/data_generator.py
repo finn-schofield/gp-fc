@@ -5,10 +5,10 @@ import numpy as np
 import sys
 
 
-def main(ndim, nclusters):
+def main(ndim, nclusters, run_id):
     config = {
         "hawks": {
-            "folder_name": "/home/schofifinn/HawksDatasets",
+            "folder_name": "",
             "save_best_data": True
         },
         "dataset": {
@@ -16,7 +16,7 @@ def main(ndim, nclusters):
                 "num_dims": ndim
             },
         "ga": {
-            "num_gens": 500
+            "num_gens": 10
         },
         "constraints": {
             "overlap": {
@@ -47,6 +47,7 @@ def main(ndim, nclusters):
     generator.plot_best_indivs(show=True)
 
 
+
 if __name__ == "__main__":
-    main(int(sys.argv[1]), int(sys.argv[2]))
+    main(int(sys.argv[1]), int(sys.argv[2]), sys.argv[3])
 
