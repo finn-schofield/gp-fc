@@ -43,14 +43,15 @@ def assess_performance(datafile):
     kmeans = KMeans(n_clusters=clusters).fit(data)
     ari = adjusted_rand_score(labels, kmeans.labels_)
     sil = silhouette_score(data, labels, metric="euclidean")
+    ksil = silhouette_score(data, kmeans.labels_, metric="euclidean")
 
-    return ari, sil
+    return ari, sil, ksil
 
 
 def process_datasets(dataset_type):
     print("processing {}".format(dataset_type))
     path = os.path.join(ROOT_DIR, dataset_type)
-    stats = pd.DataFrame(columns=["run", "ari", "silhouette"])
+    stats = pd.DataFrame(columns=["run", "ari", "silhouette", "kmeans-silhouette"])
     i = 1
     while os.path.isfile("%s/%s-%d.csv" % (path, dataset_type, i)):
         data_fname = "%s/%s-%d.data" % (path, dataset_type, i)
@@ -59,8 +60,9 @@ def process_datasets(dataset_type):
         if not os.path.isfile(data_fname):
             convert_data(data_fname, "%s/%s-%d.csv" % (path, dataset_type, i), dataset_type)
 
-        ari, sil = assess_performance(os.path.join(path, data_fname))
-        stats = stats.append({'run': int(i), 'ari': ari, 'silhouette': sil}, ignore_index=True)
+        ari, sil, ksil = assess_performance(os.path.join(path, data_fname))
+        stats = stats.append({'run': int(i), 'ari': ari, 'silhouette': sil, 'kmeans-silhouette': ksil}
+                             , ignore_index=True)
 
         i += 1
     if not stats.empty:
