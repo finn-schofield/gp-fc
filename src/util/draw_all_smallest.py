@@ -1,4 +1,4 @@
-import multi_tree as mt
+from multi_tree import init_primitives
 from main import init_toolbox
 from deap import base, gp, creator
 import numpy as np
@@ -73,12 +73,12 @@ def main():
     simplest = pd.DataFrame()
     creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 
-    pset = gp.PrimitiveSet("MAIN", 200, prefix="f")
+    pset = gp.PrimitiveSet("MAIN", 1000, prefix="f")
     pset.context["array"] = np.array
-    mt.init_primitives(pset)
+    init_primitives(pset)
 
     toolbox = base.Toolbox()
-    init_toolbox(toolbox, pset)
+    init_toolbox(toolbox, pset, 100)
 
     for dataset in get_immediate_subdirectories(ROOT_DIR):
         dataset_dir = os.path.join(ROOT_DIR, dataset)
