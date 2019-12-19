@@ -16,7 +16,7 @@ def main(ndim, nclusters, run_id):
                 "num_dims": ndim
             },
         "ga": {
-            "num_gens": 10
+            "num_gens": 500
         },
         "constraints": {
             "overlap": {
