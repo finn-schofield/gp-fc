@@ -5,6 +5,8 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score, adjusted_rand_score
 from read_data import read_data
 
+RUNS = 10  # amount of times kmeans is run to find average scores
+
 
 def get_immediate_subdirectories(a_dir):
     return sorted([name for name in os.listdir(a_dir) if os.path.isdir(os.path.join(a_dir, name))])
@@ -40,12 +42,17 @@ def assess_performance(datafile):
 
     clusters = len(set(labels))
 
-    kmeans = KMeans(n_clusters=clusters).fit(data)
-    ari = adjusted_rand_score(labels, kmeans.labels_)
-    sil = silhouette_score(data, labels, metric="euclidean")
-    ksil = silhouette_score(data, kmeans.labels_, metric="euclidean")
+    ari_total = 0
+    ksil_total = 0
 
-    return ari, sil, ksil
+    for i in range(RUNS):
+        kmeans = KMeans(n_clusters=clusters).fit(data)
+        ari_total += adjusted_rand_score(labels, kmeans.labels_)
+        ksil_total += silhouette_score(data, kmeans.labels_, metric="euclidean")
+
+    sil = silhouette_score(data, labels, metric="euclidean")
+
+    return ari_total / RUNS, sil, ksil_total / RUNS
 
 
 def process_datasets(dataset_type):
