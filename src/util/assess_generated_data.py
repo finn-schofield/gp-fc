@@ -59,8 +59,11 @@ def process_datasets(dataset_type):
     print("processing {}".format(dataset_type))
     path = os.path.join(ROOT_DIR, dataset_type)
     stats = pd.DataFrame(columns=["run", "ari", "silhouette", "kmeans-silhouette"])
-    i = 1
-    while os.path.isfile("%s/%s-%d.csv" % (path, dataset_type, i)):
+    # i = 1
+    # while os.path.isfile("%s/%s-%d.csv" % (path, dataset_type, i)):
+    for i in range(1, 11):
+        if not os.path.isfile("%s/%s-%d.csv" % (path, dataset_type, i)):
+            continue
         data_fname = "%s/%s-%d.data" % (path, dataset_type, i)
 
         # convert to data file if it has not happened already
@@ -71,7 +74,6 @@ def process_datasets(dataset_type):
         stats = stats.append({'run': int(i), 'ari': ari, 'silhouette': sil, 'kmeans-silhouette': ksil}
                              , ignore_index=True)
 
-        i += 1
     if not stats.empty:
         stats = stats.set_index(["run"])
         print(stats)
