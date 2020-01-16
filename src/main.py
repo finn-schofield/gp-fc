@@ -1,3 +1,7 @@
+from threadpoolctl import threadpool_limits
+
+
+
 import warnings
 import sys
 import re
@@ -5,6 +9,8 @@ import csv
 
 import numpy as np
 import pandas as pd
+from sklearn.utils import parallel_backend
+
 import vector_tree as vt
 import multi_tree as mt
 
@@ -58,7 +64,7 @@ def evaluate(individual, toolbox, data, k, metric, distance_vector=None, labels_
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        kmeans = KMeans(n_clusters=k, random_state=SEED).fit(X)
+        kmeans = KMeans(n_clusters=k, random_state=SEED, n_jobs=1).fit(X)
         # optics = OPTICS().fit(X)
     labels = kmeans.labels_
     # labels = optics.labels_
@@ -286,6 +292,7 @@ def plot_stats(logbook):
 
 
 def main(datafile, run_num):
+
     random.seed(SEED)
     all_data = read_data("%s/%s.data" % (DATA_DIR, datafile))
     data = all_data["data"]
@@ -352,8 +359,8 @@ if __name__ == "__main__":
         MT_CX = 'sic'
     else:
         MT_CX = 'ric'
-
-    main(sys.argv[2], SEED)
+    with threadpool_limits(limits=1, user_api='blas'):
+        main(sys.argv[2], SEED)
 
 
 
